@@ -186,10 +186,14 @@ impl<D> Connection<D> {
     /// Note that this function has knowledge of all events received from the compositor, even the
     /// ones that had not been dispatched in [`dispatch_events`](Self::dispatch_events) yet.
     ///
-    /// The version argmuent can be a:
+    /// The version argument can be a:
     /// - Number - require a specific version
     /// - Range to inclusive (`..=b` - bind a version in range `[1, b]`)
     /// - Range inclusive (`a..=b` - bind a version in range `[a, b]`)
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the global has not been announced or the requested version is not supported.
     pub fn bind_singleton<P: Proxy>(
         &mut self,
         version: impl VersionBounds,
@@ -215,6 +219,10 @@ impl<D> Connection<D> {
     }
 
     /// Same as [`bind_singleton`](Self::bind_singleton) but also sets the callback
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the global has not been announced or the requested version is not supported.
     pub fn bind_singleton_with_cb<P: Proxy, F: FnMut(EventCtx<D, P>) + Send + 'static>(
         &mut self,
         version: impl VersionBounds,

@@ -90,10 +90,14 @@ impl GlobalExt for Global {
 
     /// Bind the first instance of a global. Works great for singletons.
     ///
-    /// The version argmuent can be a:
+    /// The version argument can be a:
     /// - Number - require a specific version
     /// - Range to inclusive (`..=b` - bind a version in range `[1, b]`)
     /// - Range inclusive (`a..=b` - bind a version in range `[a, b]`)
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the global has not been announced or the requested version is not supported.
     fn bind<P: Proxy, D>(
         &self,
         conn: &mut Connection<D>,
@@ -122,6 +126,10 @@ impl GlobalExt for Global {
     }
 
     /// Same as [`bind`](Self::bind) but also sets the callback
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the global has not been announced or the requested version is not supported.
     fn bind_with_cb<P: Proxy, D, F: FnMut(EventCtx<D, P>) + Send + 'static>(
         &self,
         conn: &mut Connection<D>,
